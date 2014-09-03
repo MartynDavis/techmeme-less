@@ -1,0 +1,27 @@
+{
+    "name":        "Techmeme Less",
+    "version":     "0.0.42",
+    "description": "Allows 'More' and 'Tweets' sections to be hidden and optionally viewed",
+    "permissions": [
+        "http://www.techmeme.com/*",
+        "https://www.techmeme.com/*",
+        "http://techmeme.com/*",
+        "https://techmeme.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "http://www.techmeme.com/*", 
+                "https://www.techmeme.com/*",
+                "http://techmeme.com/*",
+                "https://techmeme.com/*"
+            ],
+            "css": ["css/techmeme-less.css"],
+            "js":  ["scripts/techmeme-less.js"]
+        }
+    ],
+    "icons": {
+        "48": "images/techmeme-less.png"
+    },
+    "manifest_version": 2
+}

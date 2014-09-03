@@ -1,0 +1,16 @@
+.dbpt {
+    display: none;
+}
+
+.techmemeless {
+    color: #888;
+    padding-left: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    float: right;
+    font-size: 0.8em;
+}
+
+.techmemeless:hover {
+    text-decoration: underline;
+}
