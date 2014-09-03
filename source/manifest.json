@@ -21,7 +21,7 @@
         }
     ],
     "icons": {
-         "48": "images/techmeme-less.png"
+         "48": "images/techmeme-less.png",
         "128": "images/techmeme-less-128.png"
     },
     "manifest_version": 2
