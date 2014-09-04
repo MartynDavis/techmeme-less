@@ -1,0 +1,13 @@
+{
+  "name": "techmeme-less",
+  "version": "0.99.0",
+  "description": "Allows 'More' and 'Tweets' information within Techmeme pages to be hidden and optionally viewed",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-compress": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-mozilla-addon-sdk": "*"
+  }
+}

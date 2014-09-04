@@ -1,6 +1,6 @@
 {
     "name":           "Techmeme Less",
-    "version":        "0.0.98",
+    "version":        "0.99",
     "description":    "Allows 'More' and 'Tweets' information within Techmeme pages to be hidden and optionally viewed",
     "author":         "Martyn Davis",
     "permissions": [
@@ -25,5 +25,6 @@
          "48": "images/techmeme-less.png",
         "128": "images/techmeme-less-128.png"
     },
-    "manifest_version": 2
+    "manifest_version": 2,
+    "update_url": "https://clients2.google.com/service/update2/crx"
 }

@@ -1,9 +1,9 @@
-"use strict";
 
 /*jslint regexp: true*/
-/*global document*/
+/*global document, alert*/
 
 (function () {
+    "use strict";
 
     function displayNode(node, display) {
         if (node && typeof node !== 'object') {
@@ -92,6 +92,7 @@
         if (value) {
             if (value.text) {
                 element.innerText = value.text;
+                element.textContent = value.text;
             }
             if (value.id) {
                 element.id = value.id;
@@ -143,7 +144,7 @@
                 if (child.nodeType === 1) {
                     if (child.className === 'drhed') {
                         type = undefined;
-                        match = re.exec(child.innerText);
+                        match = re.exec(child.innerText || child.textContent);
                         if (match && (match.length > 1)) {
                             type = match[1].toLowerCase();
                         }
@@ -210,8 +211,6 @@
             // Ensure the summary and verbose information are both hidden
             hideNode(dNode);
             hideNode(pNode);
-            showNode(doNodes);  // These were hidden by our CSS munge
-            showNode(poNodes);  // These were hidden by our CSS munge
 
             if (doNodes && (doNodes.length > 0)) {
                 counts = getCounts(doNodes[0]);
@@ -220,13 +219,18 @@
                         countsNode = createElement('span', { text: makeCountsText(counts.more, counts.tweets),
                                                              className: 'techmemeless',
                                                              tooltip: "Show/hide 'More' and/or 'Tweets' information",
-                                                             onclick: createOnclick(dNode, pNode, dxNode, pxNode)});
+                                                             onclick: createOnclick(dNode, pNode, dxNode, pxNode)
+                                                           });
                         iiNode.appendChild(countsNode);
                     }
                     recover = 0;
                 }
             }
         }
+
+        // Fixup the damage done by our CSS munging via techmeme-less.css
+        showNode(doNodes);
+        showNode(poNodes);
 
         if (recover) {
             showNode(dNode);
