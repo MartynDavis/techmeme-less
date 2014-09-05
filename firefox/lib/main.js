@@ -4,6 +4,6 @@ var pageMod = require('sdk/page-mod'),
  
 pageMod.PageMod({
   include: '*.techmeme.com',
-  contentStyleFile: self.data.url('techmeme-less.css'),
-  contentScriptFile: self.data.url('techmeme-less.js'),
+  contentStyleFile: self.data.url('css/techmeme-less.css'),
+  contentScriptFile: self.data.url('scripts/techmeme-less.js'),
 });

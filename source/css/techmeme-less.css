@@ -14,3 +14,15 @@
 .techmemeless:hover {
     text-decoration: underline;
 }
+
+.techmemeless-button {
+    color: #ddd;
+    padding-left: 2px;
+    padding-right: 2px;
+    cursor: pointer;
+}
+
+.techmemeless-button:hover {
+    color: #fff;
+    background:#578aa1;
+}

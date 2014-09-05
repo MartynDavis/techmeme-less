@@ -1,6 +1,6 @@
 
 /*jslint regexp: true*/
-/*global document, alert*/
+/*global document, alert, chrome*/
 
 (function () {
     "use strict";
@@ -94,6 +94,15 @@
                 element.innerText = value.text;
                 element.textContent = value.text;
             }
+            if (value.src) {
+                element.src = value.src;
+            }
+            if (value.height) {
+                element.height = value.height;
+            }
+            if (value.width) {
+                element.width = value.width;
+            }
             if (value.id) {
                 element.id = value.id;
             }
@@ -177,20 +186,34 @@
         }
     }
 
-    function createOnclick(dNode, pNode, dxNode, pxNode) {
-        return function () {
-            if (isNodeShown(dNode)) {
-                hideNode(dNode);
-                showNode(pNode);
-                fixupHeight(pNode, pxNode);
-            } else if (isNodeShown(pNode)) {
-                hideNode(dNode);
-                hideNode(pNode);
+    function showHide(detail, mode) {
+        if (typeof mode === 'undefined') {
+            // Mode is not specified, so determine the mode from the current state of shown nodes
+            if (isNodeShown(detail.dNode)) {
+                mode = 2;
+            } else if (isNodeShown(detail.pNode)) {
+                mode = 0;
             } else {
-                showNode(dNode);
-                hideNode(pNode);
-                fixupHeight(dNode, dxNode);
+                mode = 1;
             }
+        }
+        if (mode === 2) {
+            hideNode(detail.dNode);
+            showNode(detail.pNode);
+            fixupHeight(detail.pNode, detail.pxNode);
+        } else if (mode === 0) {
+            hideNode(detail.dNode);
+            hideNode(detail.pNode);
+        } else {
+            showNode(detail.dNode);
+            hideNode(detail.pNode);
+            fixupHeight(detail.dNode, detail.dxNode);
+        }
+    }
+
+    function createOnclick(detail) {
+        return function () {
+            showHide(detail);
         };
     }
 
@@ -205,7 +228,8 @@
             poNodes = findChildrenWithClass(pNode, 'dbpt'),
             countsNode,
             counts,
-            recover = 1;
+            recover = 1,
+            detail;
 
         if (iiNode) {
             // Ensure the summary and verbose information are both hidden
@@ -216,10 +240,11 @@
                 counts = getCounts(doNodes[0]);
                 if (counts) {
                     if (counts.more || counts.tweets) {
+                        detail = { dNode: dNode, pNode: pNode, dxNode: dxNode, pxNode: pxNode };
                         countsNode = createElement('span', { text: makeCountsText(counts.more, counts.tweets),
                                                              className: 'techmemeless',
                                                              tooltip: "Show/hide 'More' and/or 'Tweets' information",
-                                                             onclick: createOnclick(dNode, pNode, dxNode, pxNode)
+                                                             onclick: createOnclick(detail)
                                                            });
                         iiNode.appendChild(countsNode);
                     }
@@ -237,12 +262,14 @@
             hideNode(pNode);
         }
 
-        return iNode;
+        return detail;
     }
 
     function addCounts() {
         var cluster = 0,
-            item;
+            item,
+            detail,
+            details = [ ];
 
         while (true) {
 
@@ -250,10 +277,12 @@
 
             while (true) {
 
-                if (!addCountsToItem(cluster, item)) {
+                detail = addCountsToItem(cluster, item);
+                if (!detail) {
                     break;
                 }
 
+                details.push(detail);
                 item += 1;
             }
 
@@ -263,7 +292,56 @@
 
             cluster += 1;
         }
+
+        return details;
     }
 
-    addCounts();
+    function createButtonOnclick(details, mode) {
+        return function () {
+            var i;
+            if (details && details instanceof Array) {
+                for (i = 0; i < details.length; i += 1) {
+                    showHide(details[i], mode);
+                }
+            }
+        };
+    }
+
+    function addButton(node, text, tooltip, details, mode) {
+        var button;
+        if (node && text) {
+            button = createElement('span', { text: text,
+                                             tooltip: tooltip,
+                                             className: 'techmemeless-button',
+                                             height: '12',
+                                             width: '12',
+                                             onclick: createButtonOnclick(details, mode)
+                                           });
+            node.appendChild(button);
+        }
+    }
+
+    function addButtons(details) {
+        var pagecont = findFirstChildWithClass(document.body, 'pagecont'),
+            navbar = findFirstChildWithClass(pagecont, 'navbar'),
+            navtabs = findFirstChildWithClass(navbar, 'navtabs');
+
+        if (navtabs) {
+            try {
+                // Unicode 25c7 - White diamond
+                // Unicode 25c8 - White diamond containing small black diamond
+                // Unicode 25c6 - Black diamond
+                // Reference: http://en.wikipedia.org/wiki/List_of_Unicode_characters#Block_Elements (expand to show '68 Block Elements')
+                addButton(navtabs, '\u25c7', "Hide 'More' and 'Tweets' information", details, 0);
+                addButton(navtabs, '\u25c8', "Show 'More' and 'Tweets' summary information", details, 1);
+                addButton(navtabs, '\u25c6', "Show 'More' and 'Tweets' verbose information", details, 2);
+            } catch (e) {
+            }
+        }
+    }
+
+    var details = addCounts();
+    if (details && (details instanceof Array) && details.length) {
+        addButtons(details);
+    }
 }());

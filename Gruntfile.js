@@ -12,7 +12,10 @@ module.exports = function(grunt) {
                 src: [ './dist/techmeme-less.zip' ]
             },
             firefox: {
-                src: [ './dist/techmeme_less.xpi', './firefox/data/techmeme-less.css', './firefox/data/techmeme-less.js' ]
+                src: [ './dist/techmeme_less.xpi', 
+                       './firefox/data/css/techmeme-less.css', 
+                       './firefox/data/scripts/techmeme-less.js'
+                     ]
             },
         },
         jshint: {
@@ -56,10 +59,15 @@ module.exports = function(grunt) {
                     {
                         expand: true, 
                         flatten: true, 
-                        src: [ './source/css/*', './source/scripts/*' ], 
-                        dest: './firefox/data', 
-                        filter: 'isFile'
+                        src: [ './source/css/*' ], 
+                        dest: './firefox/data/css', 
                     },
+                    {
+                        expand: true, 
+                        flatten: true, 
+                        src: [ './source/scripts/*' ], 
+                        dest: './firefox/data/scripts', 
+                    }
                 ]
             }
         },
