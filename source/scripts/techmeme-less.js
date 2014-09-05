@@ -170,7 +170,7 @@
             }
         }
         if (next) {
-            getCounts(next, counts);
+            counts = getCounts(next, counts);
         }
         return counts;
     }
