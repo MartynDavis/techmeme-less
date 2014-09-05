@@ -1,6 +1,6 @@
 {
     "name":           "Techmeme Less",
-    "version":        "1.0.0",
+    "version":        "1.0.1",
     "description":    "Allows 'More' and 'Tweets' information within Techmeme pages to be hidden and optionally viewed",
     "author":         "Martyn Davis (mad@madlid.com)",
     "permissions": [
