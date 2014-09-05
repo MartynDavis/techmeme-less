@@ -5,3 +5,4 @@ firefox/data/*
 node_modules/*
 dist/*
 tmp/*
+/.project

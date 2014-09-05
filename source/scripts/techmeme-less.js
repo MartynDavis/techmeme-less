@@ -262,13 +262,13 @@
             hideNode(pNode);
         }
 
-        return detail;
+        return [iNode, detail];
     }
 
     function addCounts() {
         var cluster = 0,
             item,
-            detail,
+            retValues,
             details = [ ];
 
         while (true) {
@@ -277,12 +277,13 @@
 
             while (true) {
 
-                detail = addCountsToItem(cluster, item);
-                if (!detail) {
+                retValues = addCountsToItem(cluster, item);
+                if (!retValues || !retValues[0]) {
                     break;
                 }
-
-                details.push(detail);
+                if (retValues[1]) {
+                    details.push(retValues[1]);
+                }
                 item += 1;
             }
 
