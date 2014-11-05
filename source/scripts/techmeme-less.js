@@ -87,33 +87,25 @@
         return count;
     }
 
+    function getSeeAlsoLink(node, text) {
+        var i;
+        if (node && node.hasChildNodes && node.hasChildNodes()) {
+            for (i = 0; i < node.childNodes.length; i += 1) {
+                if ((node.childNodes[i].tagName === 'A') && (node.childNodes[i].textContent === text)) {
+                    return { href: node.childNodes[i].href, target: node.childNodes[i].target };
+                }
+            }
+        }
+    }
+
     function createElement(type, value) {
-        var element = document.createElement(type);
+        var element = document.createElement(type),
+            property;
         if (value) {
-            if (value.text) {
-                element.innerText = value.text;
-                element.textContent = value.text;
-            }
-            if (value.src) {
-                element.src = value.src;
-            }
-            if (value.height) {
-                element.height = value.height;
-            }
-            if (value.width) {
-                element.width = value.width;
-            }
-            if (value.id) {
-                element.id = value.id;
-            }
-            if (value.tooltip) {
-                element.title = value.tooltip;
-            }
-            if (value.className) {
-                element.className = value.className;
-            }
-            if (value.onclick) {
-                element.onclick = value.onclick;
+            for (property in value) {
+                if (value.hasOwnProperty(property)) {
+                    element[property] = value[property];
+                }
             }
         }
         return element;
@@ -139,9 +131,19 @@
         return text;
     }
 
+    //
+    // getCounts
+    //
+    // Returns an object with the following properties:
+    //
+    //      More    Count of the number of more links
+    //      Tweets  Count of the number of tweets
+    //      MG      Link to Mediagazer article
+    //
     function getCounts(node, counts) {
         var next = findFirstChildWithClass(node, 'dbptb'),
             child,
+            value,
             type,
             re = /^\s*(.+?)\s*:\s*$/,
             match,
@@ -161,6 +163,13 @@
                         if (type) {
                             counts = counts || { };
                             counts[type] = countChildrenWithTag(child, 'A');
+                        }
+                        type = undefined;
+                    } else if (child.className === 'moreat') {
+                        value = getSeeAlsoLink(child, 'See also Mediagazer');
+                        if (value) {
+                            counts = counts || { };
+                            counts['MG'] = value;
                         }
                         type = undefined;
                     } else {
@@ -226,7 +235,7 @@
             pxNode = getElement(cluster, item, 'px'),
             doNodes = findChildrenWithClass(dNode, 'dbpt'),
             poNodes = findChildrenWithClass(pNode, 'dbpt'),
-            countsNode,
+            newNode,
             counts,
             recover = 1,
             detail;
@@ -239,14 +248,23 @@
             if (doNodes && (doNodes.length > 0)) {
                 counts = getCounts(doNodes[0]);
                 if (counts) {
+                    if (counts.MG) {
+                        newNode = createElement('A', { textContent: 'MG',
+                                                       className: 'techmemeless',
+                                                       title: "See also Mediagazer",
+                                                       href: counts.MG.href,
+                                                       target: counts.MG.target || '_self'
+                                                     });
+                        iiNode.appendChild(newNode);
+                    }
                     if (counts.more || counts.tweets) {
                         detail = { dNode: dNode, pNode: pNode, dxNode: dxNode, pxNode: pxNode };
-                        countsNode = createElement('span', { text: makeCountsText(counts.more, counts.tweets),
-                                                             className: 'techmemeless',
-                                                             tooltip: "Show/hide 'More' and/or 'Tweets' information",
-                                                             onclick: createOnclick(detail)
-                                                           });
-                        iiNode.appendChild(countsNode);
+                        newNode = createElement('span', { textContent: makeCountsText(counts.more, counts.tweets),
+                                                          className: 'techmemeless',
+                                                          title: "Show/hide 'More' and/or 'Tweets' information",
+                                                          onclick: createOnclick(detail)
+                                                        });
+                        iiNode.appendChild(newNode);
                     }
                     recover = 0;
                 }
@@ -297,7 +315,7 @@
         return details;
     }
 
-    function createButtonOnclick(details, mode) {
+    function createButtonOnclick(details, mode, scrollIntoView) {
         return function () {
             var i;
             if (details && details instanceof Array) {
@@ -305,38 +323,45 @@
                     showHide(details[i], mode);
                 }
             }
+            if (scrollIntoView) {
+                try {
+                    this.scrollIntoView();
+                } catch (e) {
+                }
+            }
         };
     }
 
-    function addButton(node, text, tooltip, details, mode) {
+    function addButton(node, text, title, details, mode, scrollIntoView) {
         var button;
         if (node && text) {
-            button = createElement('span', { text: text,
-                                             tooltip: tooltip,
+            button = createElement('span', { textContent: text,
+                                             title: title,
                                              className: 'techmemeless-button',
                                              height: '12',
                                              width: '12',
-                                             onclick: createButtonOnclick(details, mode)
+                                             onclick: createButtonOnclick(details, mode, scrollIntoView)
                                            });
             node.appendChild(button);
         }
     }
 
     function addButtons(details) {
-        var pagecont = findFirstChildWithClass(document.body, 'pagecont'),
-            navbar = findFirstChildWithClass(pagecont, 'navbar'),
-            navtabs = findFirstChildWithClass(navbar, 'navtabs');
+        var elements = document.getElementsByClassName('navtabs'),
+            i;
 
-        if (navtabs) {
-            try {
-                // Unicode 25c7 - White diamond
-                // Unicode 25c8 - White diamond containing small black diamond
-                // Unicode 25c6 - Black diamond
-                // Reference: http://en.wikipedia.org/wiki/List_of_Unicode_characters#Block_Elements (expand to show '68 Block Elements')
-                addButton(navtabs, '\u25c7', "Hide 'More' and 'Tweets' information", details, 0);
-                addButton(navtabs, '\u25c8', "Show 'More' and 'Tweets' summary information", details, 1);
-                addButton(navtabs, '\u25c6', "Show 'More' and 'Tweets' verbose information", details, 2);
-            } catch (e) {
+        if (elements) {
+            for (i = 0; i < elements.length; i += 1) {
+                try {
+                    // Unicode 25c7 - White diamond
+                    // Unicode 25c8 - White diamond containing small black diamond
+                    // Unicode 25c6 - Black diamond
+                    // Reference: http://en.wikipedia.org/wiki/List_of_Unicode_characters#Block_Elements (expand to show '68 Block Elements')
+                    addButton(elements[i], '\u25c7', "Hide 'More' and 'Tweets' information", details, 0, i !== 0);
+                    addButton(elements[i], '\u25c8', "Show 'More' and 'Tweets' summary information", details, 1, i !== 0);
+                    addButton(elements[i], '\u25c6', "Show 'More' and 'Tweets' verbose information", details, 2, i !== 0);
+                } catch (e) {
+                }
             }
         }
     }

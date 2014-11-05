@@ -1,18 +1,20 @@
 .dbpt {
+    /* This hides all 'More', 'Tweets' and 'See also Mediagazer' information on the page */
     display: none;
 }
 
 .techmemeless {
-    color: #888;
-    padding-left: 10px;
-    cursor: pointer;
+    color: #888 !important;
+    padding-left: 10px !important;
+    cursor: pointer !important;
     white-space: nowrap;
     float: right;
     font-size: 0.8em;
 }
 
 .techmemeless:hover {
-    text-decoration: underline;
+    text-decoration: underline !important;
+    background: none !important;
 }
 
 .techmemeless-button {
