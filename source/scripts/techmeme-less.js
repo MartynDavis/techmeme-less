@@ -155,7 +155,7 @@
                 if (child.nodeType === 1) {
                     if (child.className === 'drhed') {
                         type = undefined;
-                        match = re.exec(child.innerText || child.textContent);
+                        match = re.exec(child.textContent);
                         if (match && (match.length > 1)) {
                             type = match[1].toLowerCase();
                         }
