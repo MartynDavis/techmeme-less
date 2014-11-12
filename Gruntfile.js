@@ -57,16 +57,46 @@ module.exports = function(grunt) {
             firefox: {
                 files: [
                     {
+                        nonull: true,
                         expand: true, 
                         flatten: true, 
                         src: [ './source/css/*' ], 
-                        dest: './firefox/data/css', 
+                        dest: './firefox/data/css'
                     },
                     {
+                        nonull: true,
                         expand: true, 
                         flatten: true, 
                         src: [ './source/scripts/*' ], 
-                        dest: './firefox/data/scripts', 
+                        dest: './firefox/data/scripts'
+                    }
+                ]
+            },
+            safari: {
+                files: [
+                    {
+                        nonull: true,
+                        expand: true, 
+                        flatten: true, 
+                        src: [ './source/css/*' ], 
+                        dest: './techmeme-less.safariextension'
+                    },
+                    {
+                        nonull: true,
+                        expand: true, 
+                        flatten: true, 
+                        src: [ './source/scripts/*' ], 
+                        dest: './techmeme-less.safariextension'
+                    },
+                    {
+                        nonull: true,
+                        src: './source/images/techmeme-less-32.png', 
+                        dest: './techmeme-less.safariextension/Icon-32.png'
+                    },
+                    {
+                        nonull: true,
+                        src: './source/images/techmeme-less.png', 
+                        dest: './techmeme-less.safariextension/Icon-48.png'
                     }
                 ]
             }

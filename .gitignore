@@ -6,3 +6,7 @@ node_modules/*
 dist/*
 tmp/*
 /.project
+techmeme-less.safariextension/techmeme-less.*
+techmeme-less.safariextension/Icon-*.png
+techmeme-less.safariextz
+
